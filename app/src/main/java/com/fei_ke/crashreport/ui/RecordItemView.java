@@ -43,7 +43,7 @@ public class RecordItemView extends FrameLayout {
         init();
     }
 
-    @TargetApi(Build.VERSION_CODES.L)
+    @TargetApi(Build.VERSION_CODES.LOLLIPOP)
     public RecordItemView(Context context, AttributeSet attrs, int defStyleAttr, int defStyleRes) {
         super(context, attrs, defStyleAttr, defStyleRes);
         init();
@@ -70,7 +70,7 @@ public class RecordItemView extends FrameLayout {
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
         }
-        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd:HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
         textViewAppName.setText(appName);
         imageViewIcon.setImageDrawable(icon);
         textViewSimpleInfo.setText(crashInfo.getSimpleInfo());

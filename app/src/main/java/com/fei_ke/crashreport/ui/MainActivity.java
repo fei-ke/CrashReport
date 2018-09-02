@@ -2,6 +2,7 @@ package com.fei_ke.crashreport.ui;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.preference.PreferenceManager;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -12,6 +13,7 @@ import com.fei_ke.crashreport.db.CrashInfo;
 import com.fei_ke.crashreport.R;
 import com.fei_ke.crashreport.db.RecordDao;
 
+import java.util.Collections;
 import java.util.List;
 
 
@@ -24,8 +26,6 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
-        getActionBar().setDisplayHomeAsUpEnabled(true);
 
         recordDao = new RecordDao(this);
 
@@ -75,21 +75,19 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
 
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
-        // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.menu_main, menu);
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        // Handle action bar item clicks here. The action bar will
-        // automatically handle clicks on the Home/Up button, so long
-        // as you specify a parent activity in AndroidManifest.xml.
         int id = item.getItemId();
-
-        //noinspection SimplifiableIfStatement
-        if (id == R.id.action_settings) {
-            return true;
+        if (id == R.id.action_show_notification) {
+            PreferenceManager.getDefaultSharedPreferences(this).edit()
+                    .putBoolean("show_notification", item.isChecked())
+                    .apply();
+        } else if (id == R.id.action_clear) {
+            clear();
         } else if (id == android.R.id.home) {
             finish();
         }
@@ -97,5 +95,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         return super.onOptionsItemSelected(item);
     }
 
-
+    private void clear() {
+        recordDao.clear();
+        mRecordAdapter.update(Collections.<CrashInfo>emptyList());
+    }
 }

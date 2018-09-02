@@ -49,4 +49,12 @@ public class RecordDao {
         return -1;
     }
 
+    public int clear() {
+        try {
+            return dao.deleteBuilder().delete();
+        } catch (SQLException e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
 }
