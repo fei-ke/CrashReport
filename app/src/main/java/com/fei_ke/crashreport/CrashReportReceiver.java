@@ -94,7 +94,7 @@ public class CrashReportReceiver extends BroadcastReceiver {
         }
 
         Notification notification = builder.setLargeIcon(icon)
-                .setSmallIcon(R.mipmap.ic_launcher)
+                .setSmallIcon(R.drawable.ic_notification_small)
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getActivity(context, 0,
                         CrashDialog.createIntent(context, crashInfo), PendingIntent.FLAG_UPDATE_CURRENT))
