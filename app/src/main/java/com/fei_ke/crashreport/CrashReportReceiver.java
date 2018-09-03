@@ -23,7 +23,8 @@ import android.preference.PreferenceManager;
  * Created by fei-ke on 2014/10/26.
  */
 public class CrashReportReceiver extends BroadcastReceiver {
-    public static final String EXTRA_NAME_CRASH_INFO = "crash_info";
+    public static final String EXTRA_NAME_CRASH_MESSAGE = "crash_message";
+    public static final String EXTRA_NAME_CRASH_DETAIL = "crash_detail";
     public static final String EXTRA_NAME_PACKAGE_NAME = "pkg_name";
     public static final String ACTION_REPORT_CRASH = "com.fei_ke.crashreport.action.REPORT_CRASH";
 
@@ -31,8 +32,10 @@ public class CrashReportReceiver extends BroadcastReceiver {
         Intent intent = new Intent(ACTION_REPORT_CRASH);
         intent.setPackage(BuildConfig.APPLICATION_ID);
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra(EXTRA_NAME_CRASH_INFO, throwable);
+        intent.putExtra(EXTRA_NAME_CRASH_MESSAGE, throwable.getMessage());
+        intent.putExtra(EXTRA_NAME_CRASH_DETAIL, Utils.getExceptionDetail(throwable));
         intent.putExtra(EXTRA_NAME_PACKAGE_NAME, pkgName);
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
             intent.addFlags(Intent.FLAG_RECEIVER_FOREGROUND);
         }
@@ -42,17 +45,16 @@ public class CrashReportReceiver extends BroadcastReceiver {
     @Override
     public void onReceive(final Context context, Intent intent) {
         if (ACTION_REPORT_CRASH.equals(intent.getAction())) {
-            Throwable throwable = (Throwable) intent.getSerializableExtra(EXTRA_NAME_CRASH_INFO);
-            String packageName = (String) intent.getSerializableExtra(EXTRA_NAME_PACKAGE_NAME);
-
-            final String exceptionDetail = Utils.getExceptionDetail(throwable);
+            String packageName = intent.getStringExtra(EXTRA_NAME_PACKAGE_NAME);
+            final String exceptionDetail = intent.getStringExtra(EXTRA_NAME_CRASH_DETAIL);
+            final String exceptionMessage = intent.getStringExtra(EXTRA_NAME_CRASH_MESSAGE);
 
             //存到数据库
             CrashInfo crashInfo = new CrashInfo();
             crashInfo.setPackageName(packageName);
             crashInfo.setStampTime((int) (System.currentTimeMillis() / 1000));
             crashInfo.setCrashInfo(exceptionDetail);
-            crashInfo.setSimpleInfo(throwable.getMessage());
+            crashInfo.setSimpleInfo(exceptionMessage);
 
             RecordDao recordDao = new RecordDao(context);
             recordDao.insert(crashInfo);
