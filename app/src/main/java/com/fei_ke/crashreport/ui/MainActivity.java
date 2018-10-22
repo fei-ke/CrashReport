@@ -76,6 +76,9 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     @Override
     public boolean onCreateOptionsMenu(Menu menu) {
         getMenuInflater().inflate(R.menu.menu_main, menu);
+        boolean showNotification = PreferenceManager.getDefaultSharedPreferences(this)
+                .getBoolean("show_notification", true);
+        menu.findItem(R.id.action_show_notification).setChecked(showNotification);
         return true;
     }
 
@@ -83,6 +86,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
     public boolean onOptionsItemSelected(MenuItem item) {
         int id = item.getItemId();
         if (id == R.id.action_show_notification) {
+            item.setChecked(!item.isChecked());
             PreferenceManager.getDefaultSharedPreferences(this).edit()
                     .putBoolean("show_notification", item.isChecked())
                     .apply();
