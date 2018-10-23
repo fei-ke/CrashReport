@@ -11,11 +11,15 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
 import android.os.Bundle;
 
+import com.fei_ke.crashreport.Utils;
 import com.fei_ke.crashreport.db.CrashInfo;
 import com.fei_ke.crashreport.R;
 
@@ -91,9 +95,8 @@ public class CrashDialog extends Activity {
                 })
                 .create();
         if (icon != null) {
-            Bitmap bitmap = ((BitmapDrawable) icon).getBitmap();
             int dstWidth = context.getResources().getDimensionPixelSize(R.dimen.icon_size);
-            icon = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(bitmap, dstWidth, dstWidth, true));
+            icon = new BitmapDrawable(context.getResources(), Bitmap.createScaledBitmap(Utils.drawableToBitmap(icon), dstWidth, dstWidth, true));
             alertDialog.setIcon(icon);
         }
         alertDialog.setOnDismissListener(new DialogInterface.OnDismissListener() {
@@ -104,4 +107,6 @@ public class CrashDialog extends Activity {
         });
         alertDialog.show();
     }
+
+
 }

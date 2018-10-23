@@ -5,6 +5,7 @@
     <string name="action_settings">设置</string>
     <string name="action_clear">清除</string>
     <string name="action_show_notification">显示通知</string>
+    <string name="action_make_crash">测试异常</string>
     <string name="crash_report_title">%s 错误报告</string>
     <string name="action_cancel">取消</string>
     <string name="action_confirm">复制</string>

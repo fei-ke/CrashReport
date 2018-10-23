@@ -92,6 +92,8 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
                     .apply();
         } else if (id == R.id.action_clear) {
             clear();
+        } else if (id == R.id.action_make_crash) {
+            throw new RuntimeException("Test");
         } else if (id == android.R.id.home) {
             finish();
         }

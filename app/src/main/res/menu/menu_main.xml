@@ -3,9 +3,12 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_show_notification"
-        android:title="@string/action_show_notification"
         android:checkable="true"
-        android:checked="true" />
+        android:checked="true"
+        android:title="@string/action_show_notification" />
+    <item
+        android:id="@+id/action_make_crash"
+        android:title="@string/action_make_crash" />
     <item
         android:id="@+id/action_clear"
         android:title="@string/action_clear" />

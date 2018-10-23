@@ -29,11 +29,15 @@ public class CrashReportReceiver extends BroadcastReceiver {
     public static final String ACTION_REPORT_CRASH = "com.fei_ke.crashreport.action.REPORT_CRASH";
 
     public static Intent getCrashBroadCastIntent(Throwable throwable, String pkgName) {
+        return getCrashBroadCastIntent(pkgName, throwable.getMessage(), Utils.getExceptionDetail(throwable));
+    }
+
+    public static Intent getCrashBroadCastIntent(String pkgName, String message, String stackTrace) {
         Intent intent = new Intent(ACTION_REPORT_CRASH);
         intent.setPackage(BuildConfig.APPLICATION_ID);
         intent.addFlags(Intent.FLAG_INCLUDE_STOPPED_PACKAGES);
-        intent.putExtra(EXTRA_NAME_CRASH_MESSAGE, throwable.getMessage());
-        intent.putExtra(EXTRA_NAME_CRASH_DETAIL, Utils.getExceptionDetail(throwable));
+        intent.putExtra(EXTRA_NAME_CRASH_MESSAGE, message);
+        intent.putExtra(EXTRA_NAME_CRASH_DETAIL, stackTrace);
         intent.putExtra(EXTRA_NAME_PACKAGE_NAME, pkgName);
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
@@ -73,7 +77,7 @@ public class CrashReportReceiver extends BroadcastReceiver {
         try {
             PackageManager packageManager = context.getPackageManager();
             ApplicationInfo info = packageManager.getApplicationInfo(packageName, 0);
-            icon = ((BitmapDrawable) packageManager.getApplicationIcon(info)).getBitmap();
+            icon = Utils.drawableToBitmap(packageManager.getApplicationIcon(info));
             appName = packageManager.getApplicationLabel(info).toString();
         } catch (PackageManager.NameNotFoundException e) {
             e.printStackTrace();
