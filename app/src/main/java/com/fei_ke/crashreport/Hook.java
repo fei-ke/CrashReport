@@ -9,32 +9,41 @@ import android.os.Process;
 import de.robv.android.xposed.IXposedHookLoadPackage;
 import de.robv.android.xposed.IXposedHookZygoteInit;
 import de.robv.android.xposed.XC_MethodHook;
+import de.robv.android.xposed.XC_MethodReplacement;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
 
 public class Hook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
     @Override
-    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam) throws Throwable {
+    public void handleLoadPackage(XC_LoadPackage.LoadPackageParam loadPackageParam)
+            throws Throwable {
         if (loadPackageParam.packageName.equals("android")) {
-            Class<?> classAppError = XposedHelpers.findClass("com.android.server.am.AppErrors", loadPackageParam.classLoader);
-            XposedBridge.hookAllMethods(classAppError, "crashApplicationInner", new XC_MethodHook() {
-                @Override
-                protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                    Object processRecord = param.args[0];
-                    ApplicationInfo info = (ApplicationInfo) XposedHelpers.getObjectField(processRecord, "info");
-                    String packageName = info.packageName;
+            Class<?> classAppError = XposedHelpers.findClass("com.android.server.am.AppErrors",
+                    loadPackageParam.classLoader);
+            XposedBridge.hookAllMethods(classAppError, "crashApplicationInner",
+                    new XC_MethodHook() {
+                        @Override
+                        protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                            Object processRecord = param.args[0];
+                            ApplicationInfo info = (ApplicationInfo) XposedHelpers.getObjectField(
+                                    processRecord, "info");
+                            String packageName = info.packageName;
 
-                    Object crashInfo = param.args[1];
-                    String message = (String) XposedHelpers.getObjectField(crashInfo, "exceptionMessage");
-                    String stackTrace = (String) XposedHelpers.getObjectField(crashInfo, "stackTrace");
+                            Object crashInfo = param.args[1];
+                            String message = (String) XposedHelpers.getObjectField(crashInfo,
+                                    "exceptionMessage");
+                            String stackTrace = (String) XposedHelpers.getObjectField(crashInfo,
+                                    "stackTrace");
 
-                    Context context = (Context) XposedHelpers.getObjectField(param.thisObject, "mContext");
+                            Context context = (Context) XposedHelpers.getObjectField(
+                                    param.thisObject, "mContext");
 
-                    Intent intent = CrashReportReceiver.getCrashBroadCastIntent(packageName, message, stackTrace);
-                    context.sendBroadcast(intent);
-                }
-            });
+                            Intent intent = CrashReportReceiver.getCrashBroadCastIntent(packageName,
+                                    message, stackTrace);
+                            context.sendBroadcast(intent);
+                        }
+                    });
         }
 
 
@@ -56,7 +65,8 @@ public class Hook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                 new Thread() {
                     @Override
                     public void run() {
-                        Intent intent = CrashReportReceiver.getCrashBroadCastIntent(e, context.getPackageName());
+                        Intent intent = CrashReportReceiver.getCrashBroadCastIntent(e,
+                                context.getPackageName());
                         context.sendBroadcast(intent);
                         Process.killProcess(Process.myPid());
                         System.exit(0);
@@ -70,6 +80,19 @@ public class Hook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
 
     @Override
     public void initZygote(StartupParam startupParam) throws Throwable {
+        XposedHelpers.findAndHookMethod(Thread.class, "setDefaultUncaughtExceptionHandler",
+                Thread.UncaughtExceptionHandler.class, new XC_MethodHook() {
+                    @Override
+                    protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
+                        Object handler = param.args[0];
+                        if (!handler.getClass().getName().startsWith(
+                                "com.android.internal.os.RuntimeInit$")) {
+                            param.setResult(null);
+                        }
+                    }
+                });
 
+        XposedHelpers.findAndHookMethod(Thread.class, "setUncaughtExceptionHandler",
+                Thread.UncaughtExceptionHandler.class, XC_MethodReplacement.returnConstant(null));
     }
 }
