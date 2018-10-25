@@ -85,7 +85,7 @@ public class Hook implements IXposedHookLoadPackage, IXposedHookZygoteInit {
                     @Override
                     protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                         Object handler = param.args[0];
-                        if (!handler.getClass().getName().startsWith(
+                        if (handler == null || !handler.getClass().getName().startsWith(
                                 "com.android.internal.os.RuntimeInit$")) {
                             param.setResult(null);
                         }
