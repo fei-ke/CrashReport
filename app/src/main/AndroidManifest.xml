@@ -19,7 +19,8 @@
         </activity>
         <activity
             android:name=".ui.CrashDialog"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar.Fullscreen"/>
+            android:launchMode="singleTask"
+            android:theme="@style/AppTheme.DialogActivity"/>
 
         <receiver android:name=".CrashReportReceiver">
             <intent-filter>

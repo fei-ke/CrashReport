@@ -68,6 +68,7 @@ public class RecordItemView extends FrameLayout {
             ApplicationInfo info = packageManager.getApplicationInfo(packageName, 0);
             appName = packageManager.getApplicationLabel(info).toString();
         } catch (PackageManager.NameNotFoundException e) {
+            appName = packageName;
             e.printStackTrace();
         }
         SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");

@@ -11,13 +11,10 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
-import android.graphics.Canvas;
-import android.graphics.Paint;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
-import android.os.Build;
 import android.os.Bundle;
+import android.view.WindowManager;
 
 import com.fei_ke.crashreport.Utils;
 import com.fei_ke.crashreport.db.CrashInfo;
@@ -42,6 +39,7 @@ public class CrashDialog extends Activity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
         CrashInfo crashInfo = (CrashInfo) getIntent().getSerializableExtra(CRASH_INFO);
         showDialog(this, crashInfo);
     }
@@ -58,18 +56,13 @@ public class CrashDialog extends Activity {
             icon = packageManager.getApplicationIcon(info);
             appName = packageManager.getApplicationLabel(info).toString();
         } catch (PackageManager.NameNotFoundException e) {
+            appName = packageName;
             e.printStackTrace();
         }
 
-        int theme;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-            theme = android.R.style.Theme_Material_Light_Dialog_Alert;
-        } else {
-            theme = AlertDialog.THEME_HOLO_LIGHT;
-        }
 
         final String title = getString(R.string.crash_report_title, appName != null ? appName : "");
-        final AlertDialog alertDialog = new AlertDialog.Builder(context, theme)
+        final AlertDialog alertDialog = new AlertDialog.Builder(context)
                 .setTitle(title)
                 .setMessage(exceptionDetail)
                 .setNegativeButton(R.string.action_cancel, null)
@@ -108,5 +101,9 @@ public class CrashDialog extends Activity {
         alertDialog.show();
     }
 
-
+    @Override
+    public void finish() {
+        super.finish();
+        overridePendingTransition(0, 0);
+    }
 }
