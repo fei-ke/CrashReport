@@ -9,6 +9,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
 
+import com.fei_ke.crashreport.MakeCrash;
 import com.fei_ke.crashreport.db.CrashInfo;
 import com.fei_ke.crashreport.R;
 import com.fei_ke.crashreport.db.RecordDao;
@@ -93,7 +94,7 @@ public class MainActivity extends Activity implements AdapterView.OnItemClickLis
         } else if (id == R.id.action_clear) {
             clear();
         } else if (id == R.id.action_make_crash) {
-            throw new RuntimeException("Test");
+            MakeCrash.makeCrash(this);
         } else if (id == android.R.id.home) {
             finish();
         }

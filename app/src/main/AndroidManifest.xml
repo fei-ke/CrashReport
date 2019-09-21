@@ -27,6 +27,9 @@
             </intent-filter>
         </receiver>
 
+        <service android:name=".MakeCrash"
+            android:isolatedProcess="true"/>
+
         <meta-data
             android:name="xposedmodule"
             android:value="true"/>
