@@ -19,6 +19,8 @@
         </activity>
         <activity
             android:name=".ui.CrashDialog"
+            android:excludeFromRecents="true"
+            android:taskAffinity=""
             android:theme="@style/AppTheme.DialogActivity"/>
 
         <receiver android:name=".CrashReportReceiver">
