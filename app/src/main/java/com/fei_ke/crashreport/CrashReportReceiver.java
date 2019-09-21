@@ -104,7 +104,7 @@ public class CrashReportReceiver extends BroadcastReceiver {
                 .setAutoCancel(true)
                 .setContentIntent(PendingIntent.getActivity(context, 0,
                         CrashDialog.createIntent(context, crashInfo), PendingIntent.FLAG_UPDATE_CURRENT))
-                .setContentText(appName)
+                .setContentTitle(appName)
                 .setContentText(crashInfo.getSimpleInfo())
                 .setTicker(crashInfo.getSimpleInfo())
                 .getNotification();
