@@ -3,15 +3,11 @@ package com.fei_ke.crashreport.db;
 import com.j256.ormlite.field.DatabaseField;
 import com.j256.ormlite.table.DatabaseTable;
 
-import java.io.Serializable;
-
 /**
  * 崩溃信息
  */
 @DatabaseTable(tableName = "record")
-public class CrashInfo implements Serializable {
-
-    Throwable throwable;
+public class CrashInfo {
     //--------表结构
     @DatabaseField(generatedId = true)
     private int _id;
@@ -41,14 +37,6 @@ public class CrashInfo implements Serializable {
 
     public void setPackageName(String packageName) {
         this.packageName = packageName;
-    }
-
-    public Throwable getThrowable() {
-        return throwable;
-    }
-
-    public void setThrowable(Throwable throwable) {
-        this.throwable = throwable;
     }
 
     public CrashInfo() {

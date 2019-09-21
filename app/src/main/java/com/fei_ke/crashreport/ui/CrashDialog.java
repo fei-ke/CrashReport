@@ -24,6 +24,7 @@ import com.fei_ke.crashreport.R;
  */
 public class CrashDialog extends Activity {
     private static final String CRASH_INFO = "crash_info";
+    private static final String PACKAGE_NAME = "package_name";
 
     public static void show(Context context, CrashInfo crashInfo) {
         context.startActivity(createIntent(context, crashInfo));
@@ -31,7 +32,10 @@ public class CrashDialog extends Activity {
 
     public static Intent createIntent(Context context, CrashInfo crashInfo) {
         Intent intent = new Intent(context, CrashDialog.class);
-        intent.putExtra(CRASH_INFO, crashInfo);
+        //ensure every intent is unique
+        intent.setAction("dummy_action." + crashInfo.getStampTime());
+        intent.putExtra(CRASH_INFO, crashInfo.getCrashInfo());
+        intent.putExtra(PACKAGE_NAME, crashInfo.getPackageName());
         intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
     }
@@ -40,14 +44,12 @@ public class CrashDialog extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
-        CrashInfo crashInfo = (CrashInfo) getIntent().getSerializableExtra(CRASH_INFO);
-        showDialog(this, crashInfo);
+        String packageName = getIntent().getStringExtra(PACKAGE_NAME);
+        String crashInfo = getIntent().getStringExtra(CRASH_INFO);
+        showDialog(this, packageName, crashInfo);
     }
 
-    private void showDialog(final Context context, CrashInfo crashInfo) {
-        String packageName = crashInfo.getPackageName();
-        final CharSequence exceptionDetail = crashInfo.getCrashInfo();
-
+    private void showDialog(final Context context, final String packageName, final String exceptionDetail) {
         Drawable icon = null;
         String appName = null;
         try {
