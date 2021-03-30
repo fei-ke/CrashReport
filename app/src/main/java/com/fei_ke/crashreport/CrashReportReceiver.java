@@ -14,7 +14,6 @@ import android.content.Intent;
 import android.content.pm.ApplicationInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
-import android.graphics.drawable.BitmapDrawable;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
@@ -27,10 +26,6 @@ public class CrashReportReceiver extends BroadcastReceiver {
     public static final String EXTRA_NAME_CRASH_DETAIL = "crash_detail";
     public static final String EXTRA_NAME_PACKAGE_NAME = "pkg_name";
     public static final String ACTION_REPORT_CRASH = "com.fei_ke.crashreport.action.REPORT_CRASH";
-
-    public static Intent getCrashBroadCastIntent(Throwable throwable, String pkgName) {
-        return getCrashBroadCastIntent(pkgName, throwable.getMessage(), Utils.getExceptionDetail(throwable));
-    }
 
     public static Intent getCrashBroadCastIntent(String pkgName, String message, String stackTrace) {
         Intent intent = new Intent(ACTION_REPORT_CRASH);
