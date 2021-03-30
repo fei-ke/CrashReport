@@ -12,6 +12,7 @@ import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ApplicationInfo;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.os.Build;
@@ -48,11 +49,29 @@ public class CrashReportReceiver extends BroadcastReceiver {
             final String exceptionDetail = intent.getStringExtra(EXTRA_NAME_CRASH_DETAIL);
             final String exceptionMessage = intent.getStringExtra(EXTRA_NAME_CRASH_MESSAGE);
 
+            StringBuilder crashInfoBuilder = new StringBuilder();
+
+            //version info
+            try {
+                PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
+                crashInfoBuilder.append("Version Name: ")
+                        .append(info.versionName)
+                        .append("\n")
+                        .append("Version Code: ")
+                        .append(info.versionCode)
+                        .append("\n\n");
+            } catch (PackageManager.NameNotFoundException e) {
+                e.printStackTrace();
+                return;
+            }
+
+            crashInfoBuilder.append(exceptionDetail);
+
             //存到数据库
             CrashInfo crashInfo = new CrashInfo();
             crashInfo.setPackageName(packageName);
             crashInfo.setStampTime((int) (System.currentTimeMillis() / 1000));
-            crashInfo.setCrashInfo(exceptionDetail);
+            crashInfo.setCrashInfo(crashInfoBuilder.toString());
             crashInfo.setSimpleInfo(exceptionMessage);
 
             RecordDao recordDao = new RecordDao(context);
