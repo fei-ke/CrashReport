@@ -18,6 +18,8 @@ import android.graphics.Bitmap;
 import android.os.Build;
 import android.preference.PreferenceManager;
 
+import java.util.Locale;
+
 /**
  * Receiver for crash info
  * Created by fei-ke on 2014/10/26.
@@ -54,11 +56,7 @@ public class CrashReportReceiver extends BroadcastReceiver {
             //version info
             try {
                 PackageInfo info = context.getPackageManager().getPackageInfo(packageName, 0);
-                crashInfoBuilder.append("Version Name: ")
-                        .append(info.versionName)
-                        .append("\n")
-                        .append("Version Code: ")
-                        .append(info.versionCode)
+                crashInfoBuilder.append(String.format(Locale.getDefault(),"Version: %s (%d)", info.versionName, info.versionCode))
                         .append("\n\n");
             } catch (PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
